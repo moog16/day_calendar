@@ -42,24 +42,51 @@ function createDiv(className) {
 
 
 function renderAppointments(calendar, events) {
-  var endTimesSorted = events.map(function(e, i, events) {
-    return e.end;
-  }).sort();
-  console.log(endTimesSorted);
+  //make copy
+  events = events.slice();
 
-  for(var i=0; i<events.length; i++) {
-    var e = events[i];
+  function createAndSetPosition(height, top) {
     var elem = createDiv('appointment');
-    var endTime = 0;
 
-
-    elem.style.height = e.end - e.start + 'px';
-
-
-    elem.style.top = e.start + 'px';
-
+    elem.style.height = height + 'px';
+    elem.style.top = top + 'px';
     calendar.getElementsByClassName('calendar-day-layout')[0].appendChild(elem);
   }
+
+  // get first event(s) - there maybe more than one event with same start time
+  var firstEventStartTime = events.map(function(e, i, events) {
+    return e.start;
+  }).sort(function(a, b){return a-b})[0];
+
+  var endTimesSorted = events.map(function(e, i, events) {
+    return e.end;
+  }).sort(function(a, b){return a-b});
+
+  //get first event
+  for(var i=0; i<events.length; i++) {
+    var e = events[i];
+    if(e.start === firstEventStartTime) {
+      var height = e.end - e.start;
+      createAndSetPosition(height, e.start);
+      events[i] = []; // don't create appointment again
+    }
+  }
+
+  // for(var i=0; i<events.length; i++) {
+  //   var e = events[i];
+  //   var endTime = 0;
+
+  //   // position from top of day will be the closest endTime - startTime w/ position:relative
+  //   for(var j=0; j<endTimesSorted.length; j++) {
+  //     if(endTime)
+  //     if(endTimesSorted[j] > e.start) {
+  //       endTime = endTimesSorted[j-1];
+  //       console.log(endTime);
+  //       break;
+  //     }
+  //   }
+
+  // }
 }
 
 
@@ -67,9 +94,11 @@ function renderAppointments(calendar, events) {
 var events = [ 
 {start: 560, end: 620},
 {start: 540, end: 600}, 
-{start: 30, end: 150},
 {start: 90, end: 150}, 
+{start: 90, end: 200}, 
 {start: 610, end: 670} ];
+
+[150, 600, 620, 670]
 
 layOutDay(events);
 
