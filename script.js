@@ -53,40 +53,12 @@ function renderAppointments(calendar, events) {
     calendar.getElementsByClassName('calendar-day-layout')[0].appendChild(elem);
   }
 
-  // get first event(s) - there maybe more than one event with same start time
-  var firstEventStartTime = events.map(function(e, i, events) {
-    return e.start;
-  }).sort(function(a, b){return a-b})[0];
-
-  var endTimesSorted = events.map(function(e, i, events) {
-    return e.end;
-  }).sort(function(a, b){return a-b});
-
-  //get first event
   for(var i=0; i<events.length; i++) {
     var e = events[i];
-    if(e.start === firstEventStartTime) {
-      var height = e.end - e.start;
-      createAndSetPosition(height, e.start);
-      events[i] = []; // don't create appointment again
-    }
+    var endTime = 0;
+
+    createAndSetPosition(e.end - e.start, e.start);
   }
-
-  // for(var i=0; i<events.length; i++) {
-  //   var e = events[i];
-  //   var endTime = 0;
-
-  //   // position from top of day will be the closest endTime - startTime w/ position:relative
-  //   for(var j=0; j<endTimesSorted.length; j++) {
-  //     if(endTime)
-  //     if(endTimesSorted[j] > e.start) {
-  //       endTime = endTimesSorted[j-1];
-  //       console.log(endTime);
-  //       break;
-  //     }
-  //   }
-
-  // }
 }
 
 
