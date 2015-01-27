@@ -3,10 +3,18 @@ function layOutDay(events) {
   var W = 600;
 
   renderCalendar(calendar);
+  renderAppointments(calendar, events)
 }
 
-function renderAppointments(events, height) {
+function renderAppointments(calendar, events) {
+  for(var i=0; i<events.length; i++) {
+    var e = events[i];
+    var elem = createDiv('appointment');
 
+    elem.style.height = e.end - e.start + 'px';
+
+    calendar.getElementsByClassName('calendar-day-layout')[0].appendChild(elem);
+  }
 }
 
 function renderCalendar(calendar) {
@@ -17,19 +25,19 @@ function renderCalendar(calendar) {
 
 
 function renderTimes(calendar) {
-  calendar.insertBefore(createDiv('calendar-day-times'), calendar.firstChild);
-
-  var dayBegin = 540;
   var dayLength = 720; // in minutes; SAME AS HEIGHT
+  var dayBegin = 540;
   var dayLayout = calendar.getElementsByClassName('calendar-day-layout')[0];
 
+  calendar.insertBefore(createDiv('calendar-day-times'), calendar.firstChild);
+  
   for(var i=0; i<=dayLength/30; i++) {
     var elem = createDiv('calendar-day-time');
     var minutes = dayBegin + i*30;
     var hours = minutes/60;
     var hour = Math.floor(hours%12) || '12';
     var minute = hours%1*60 || '00';
-    var periodOfDay = minute !== 30 ? (minutes >= 720? 'pm' : 'am') : '';
+    var periodOfDay = minute !== 30 ? (minutes >= 720 ? 'pm' : 'am') : '';
     var time = hour + ':' + minute + periodOfDay;
     elem.textContent = time;
     elem.style.top = i*30+'px';
