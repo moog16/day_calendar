@@ -20,3 +20,8 @@
   position: absolute;
   float: right;
 }
+
+.appointment {
+  position: relative;
+  border: 1px solid black;
+}
