@@ -1,0 +1,23 @@
+.calendar-day-layout {
+  height: 720px;
+  width: 600px;
+  padding: 0 10px;
+  display: inline-block;
+
+
+  border: 1px solid;
+}
+
+.calendar-day-times {
+  height: 720px;
+  width: 55px;
+  display: inline-block;
+  float: left;
+
+  border: 1px solid;
+}
+
+.calendar-day-time {
+  position: absolute;
+  float: right;
+}
