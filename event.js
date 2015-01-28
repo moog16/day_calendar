@@ -8,7 +8,7 @@ function CalEvent(start, end) {
   this.left;
 };
 
-CalEvent.prototype.isOverlaping = function(otherEvent) {
+CalEvent.prototype.isOverlapping = function(otherEvent) {
   var start = this.start;
   var otherStart = otherEvent.start;
   if(start >= otherStart && start <= otherEvent.end ||
