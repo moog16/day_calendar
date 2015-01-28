@@ -2,58 +2,71 @@ function layOutDay(events) {
   var calendar = document.getElementById('calendar');
   var W = 600;
 
+  function getCalendarEvents(events) {
+    var calendarEvents = [];
+    for(var i=0; i<events.length; i++) {
+      var e = events[i];
+      var id = Math.floor(new Date().valueOf()* Math.random());
+      var calEvent = new CalEvent(e.start, e.end, id);
+      calendarEvents.push(calEvent);
+    }
+    return calendarEvents;
+  }
+
+  function getSortedOverlaps(calendarEvents) {
+    var sortedOverlaps = [];
+
+    for(var i=0; i<calendarEvents.length; i++) {
+      var calEvent = calendarEvents[i];
+      calEvent.setOverlappingEvents(calendarEvents);
+
+      // create sortedOverlaps which are buckets of calEvents
+      // with the same number of overlappingEvents
+      var index = calEvent.overlappingEvents.length;
+      var sortedOverlapsBucket = sortedOverlaps[index];
+      if(sortedOverlapsBucket && sortedOverlapsBucket.length) {
+        sortedOverlapsBucket.push(calEvent);
+      } else {
+        sortedOverlaps[index] = [calEvent];
+      }
+    }
+    return sortedOverlaps;
+  }
+
   renderCalendar(calendar);
-  renderAppointments(calendar, events)
+
+  var calendarEvents = getCalendarEvents(events);
+
+  var sortedOverlaps = getSortedOverlaps(calendarEvents);
+
+
+  // iterate over sortedOverlaps
+  for(var i=0; i<sortedOverlaps.length; i++) {
+    var bucket = sortedOverlaps[i];
+
+    if(bucket && bucket.length) {
+      for(var j=0; j<bucket.length; j++) {
+        var calEvent = bucket[j];
+        calEvent.setUniqOverlaps();
+      }
+    }
+  }
+
+  
+
+  // render on display
+  for(var i=0; i<calendarEvents.length; i++) {
+    var calEvent = calendarEvents[i];
+    calEvent.createAndSetPosition(calendar, W);
+  }
+  debugger;
+
+
 }
 
 function renderCalendar(calendar) {
   calendar.appendChild(createDiv('calendar-day-layout'));
   renderTimes(calendar);
-}
-
-function renderAppointments(calendar, events) {
-  var calendarEvents = [];
-
-  function createNewBucket(buckets, calEvent) {
-    buckets.push({
-      parentEvent: new CalEvent(calEvent.start, calEvent.end),
-      events: [calEvent]
-    });
-  }
-
-  // create event objects
-  for(var i=0; i<events.length; i++) {
-    var e = events[i];
-    var id = Math.floor(new Date().valueOf()* Math.random());
-    var calEvent = new CalEvent(e.start, e.end, id);
-    calEvent.createAndSetPosition(calendar);
-    calendarEvents.push(calEvent);
-  }
-
-  // have the calEvent be aware of the other overlapping events 
-  // by the otherEvents into an array
-  for(var i=0; i<calendarEvents.length; i++) {
-    var calEvent = calendarEvents[i];
-    for(var j=0; j<calendarEvents.length; j++) {
-      var otherEvent = calendarEvents[j];
-      if(otherEvent.id === calEvent.id) {
-        continue;
-      } else if(calEvent.isOverlapping(otherEvent)) {
-        calEvent.overlappingEvents.push(otherEvent);
-      }
-    }
-  }
-
-  // sort events by number of overlapping events 
-  var sortedByNumberOfOverlaps = calendarEvents.sort(function(a, b) {
-    return a.overlappingEvents.length - b.overlappingEvents.length;
-  });
-
-  // iterate through all sortedByNumberOfOverlaps  
-  // and set widths and left pos
-
-  debugger;
-
 }
 
 
@@ -67,6 +80,5 @@ var events = [
 {start: 90, end: 200}, 
 {start: 610, end: 670} ];
 
-[150, 600, 620, 670]
 
 layOutDay(events);
