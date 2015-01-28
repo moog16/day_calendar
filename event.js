@@ -1,11 +1,13 @@
-function CalEvent(start, end) {
+function CalEvent(start, end, id) {
+  this.id = id;
   this.start = start;
   this.end = end;
   this.top = start;
   this.height = end - start;
   this.elem = createDiv('calendar-event');
-  this.index;
+  this.width;
   this.left;
+  this.overlappingEvents = [];
 };
 
 CalEvent.prototype.isOverlapping = function(otherEvent) {
