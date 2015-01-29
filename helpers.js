@@ -3,6 +3,13 @@ function createDiv(className) {
   div.className = className;
   return div;
 }
+function range(n) {
+  var range = [];
+  for(var i=0; i<=n; i++) {
+    range.push(i);
+  }
+  return range;
+}
 
 function renderTimes(calendar) {
   var dayLength = 720; // in minutes; SAME AS HEIGHT

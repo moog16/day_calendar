@@ -7,7 +7,8 @@ function CalEvent(start, end, id) {
   this.elem = createDiv('calendar-event');
   this.overlappingEvents = [];
   this.wRatio;
-  this.left = 0;
+  this.position;
+  this.left;
 };
 
 CalEvent.prototype.createAndSetPosition = function(calendar, W) {
@@ -27,7 +28,6 @@ CalEvent.prototype.isOverlapping = function(otherEvent) {
     return true;
   }
 }
-
 
 // have the calEvent be aware of the other overlapping events 
 // by the otherEvents into an array

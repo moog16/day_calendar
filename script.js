@@ -50,41 +50,36 @@ function layOutDay(events) {
   //loop over buckets and get calendar event with most overlaps
   for(var i=0; i<buckets.length; i++) {
     var bucket = buckets[i];
+    var overlaps = bucket.length;
     var leastNumberOfOverlaps = bucket.length;
-    //get smallest # of overlaps in the bucket
+    //get least # of overlaps in the bucket
     for(var j=0; j<bucket.length; j++) {
       var calEvent = bucket[j];
       if(calEvent.overlappingEvents.length < leastNumberOfOverlaps) {
         leastNumberOfOverlaps = calEvent.overlappingEvents.length;
       }
     }
-    // get indexes
+    // get wRatio for width calculation
     for(var j=0; j<bucket.length; j++) {
       var calEvent = bucket[j];
       if(!calEvent.wRatio || calEvent.wRatio > leastNumberOfOverlaps) {
         calEvent.wRatio = leastNumberOfOverlaps;
       }
     }
-  }
 
-  //loop through all buckets
-  for(var i=0; i<buckets.length; i++) {
-    var bucket = buckets[i];
-    var overlaps = bucket.length;
-    var sortedBucket = bucket.sort(function(a, b) {
-      var startDiff = a.start - b.start;
-      if(startDiff === 0) {
-        return b.end - a.end;
-      } else {
-        return startDiff;
-      }
-    });
+    var availablePos = range(leastNumberOfOverlaps);
 
     // set lefts & widths
-    for(var j=0; j<sortedBucket.length; j++) {
-      var calEvent = sortedBucket[j];
-      // calEvent.width = W/(calEvent.wRatio+1);
-      calEvent.left = j * W/overlaps + 75;
+    for(var j=0; j<bucket.length; j++) {
+      var calEvent = bucket[j];
+      if(calEvent.position) {
+        availablePos.splice(calEvent.position, 1);
+      } else {
+        calEvent.position = Math.min.apply(null, availablePos);
+        availablePos.splice(calEvent.position, 1);
+        calEvent.left = calEvent.position * W/(calEvent.wRatio+1) + 75;
+      }
+      
     }
   }
 
@@ -113,6 +108,7 @@ var events = [
 {start: 540, end: 600}, 
 {start: 90, end: 150},
 {start: 90, end: 200}, 
+// {start: 100, end: 180},
 {start: 610, end: 670} ];
 
 
