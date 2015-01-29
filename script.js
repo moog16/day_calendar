@@ -83,7 +83,7 @@ function layOutDay(events) {
     // set lefts & widths
     for(var j=0; j<sortedBucket.length; j++) {
       var calEvent = sortedBucket[j];
-      calEvent.width = W/(calEvent.wRatio+1);
+      // calEvent.width = W/(calEvent.wRatio+1);
       calEvent.left = j * W/overlaps + 75;
     }
   }
@@ -92,7 +92,7 @@ function layOutDay(events) {
   // render on display
   for(var i=0; i<calendarEvents.length; i++) {
     var calEvent = calendarEvents[i];
-    calEvent.createAndSetPosition(calendar);
+    calEvent.createAndSetPosition(calendar, W);
   }
   debugger;
 

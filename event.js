@@ -7,16 +7,15 @@ function CalEvent(start, end, id) {
   this.elem = createDiv('calendar-event');
   this.overlappingEvents = [];
   this.wRatio;
-  this.width = 0;
   this.left = 0;
 };
 
-CalEvent.prototype.createAndSetPosition = function(calendar) {
+CalEvent.prototype.createAndSetPosition = function(calendar, W) {
   var elem = this.elem;
   elem.style.height = this.height + 'px';
   elem.style.top = this.top + 'px';
   elem.style.left = this.left + 'px';
-  elem.style.width = this.width + 'px';
+  elem.style.width = this.width(W) + 'px';
   calendar.getElementsByClassName('calendar-day-layout')[0].appendChild(elem);
 }
 
@@ -41,4 +40,8 @@ CalEvent.prototype.setOverlappingEvents = function(calendarEvents) {
       this.overlappingEvents.push(otherEvent);
     }
   }
+}
+
+CalEvent.prototype.width = function(W) {
+  return W/(this.wRatio+1);
 }
