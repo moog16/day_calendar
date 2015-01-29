@@ -72,9 +72,7 @@ function layOutDay(events) {
     // set lefts & widths
     for(var j=0; j<bucket.length; j++) {
       var calEvent = bucket[j];
-      if(calEvent.position) {
-        availablePos.splice(calEvent.position, 1);
-      } else {
+      if(calEvent.position === undefined) {
         calEvent.position = Math.min.apply(null, availablePos);
         availablePos.splice(calEvent.position, 1);
         calEvent.left = calEvent.position * W/(calEvent.wRatio+1) + 75;
