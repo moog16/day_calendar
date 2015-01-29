@@ -6,15 +6,17 @@ function CalEvent(start, end, id) {
   this.height = end - start;
   this.elem = createDiv('calendar-event');
   this.overlappingEvents = [];
-  this.uniqOverlaps = 0;
-  this.left;
+  this.wRatio;
+  this.width = 0;
+  this.left = 0;
 };
 
-CalEvent.prototype.createAndSetPosition = function(calendar, W) {
+CalEvent.prototype.createAndSetPosition = function(calendar) {
   var elem = this.elem;
   elem.style.height = this.height + 'px';
   elem.style.top = this.top + 'px';
-  elem.style.width = this.width(W) + 'px';
+  elem.style.left = this.left + 'px';
+  elem.style.width = this.width + 'px';
   calendar.getElementsByClassName('calendar-day-layout')[0].appendChild(elem);
 }
 
@@ -25,9 +27,6 @@ CalEvent.prototype.isOverlapping = function(otherEvent) {
      otherStart >= start && otherStart <= this.end) {
     return true;
   }
-}
-
-CalEvent.prototype.setLeft = function() {
 }
 
 
@@ -42,18 +41,4 @@ CalEvent.prototype.setOverlappingEvents = function(calendarEvents) {
       this.overlappingEvents.push(otherEvent);
     }
   }
-}
-
-
-CalEvent.prototype.setUniqOverlaps = function() {
-  for(var i=0; i<this.overlappingEvents.length; i++) {
-    var overlap = this.overlappingEvents[i];
-    if(overlap.overlappingEvents.length > this.uniqOverlaps) {
-      this.uniqOverlaps = overlap.overlappingEvents.length;
-    }
-  }
-}
-
-CalEvent.prototype.width = function(W) {
-  return W/(this.uniqOverlaps+1);
 }

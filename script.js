@@ -13,51 +13,86 @@ function layOutDay(events) {
     return calendarEvents;
   }
 
-  function getSortedOverlaps(calendarEvents) {
-    var sortedOverlaps = [];
-
-    for(var i=0; i<calendarEvents.length; i++) {
-      var calEvent = calendarEvents[i];
-      calEvent.setOverlappingEvents(calendarEvents);
-
-      // create sortedOverlaps which are buckets of calEvents
-      // with the same number of overlappingEvents
-      var index = calEvent.overlappingEvents.length;
-      var sortedOverlapsBucket = sortedOverlaps[index];
-      if(sortedOverlapsBucket && sortedOverlapsBucket.length) {
-        sortedOverlapsBucket.push(calEvent);
-      } else {
-        sortedOverlaps[index] = [calEvent];
-      }
-    }
-    return sortedOverlaps;
-  }
-
   renderCalendar(calendar);
 
   var calendarEvents = getCalendarEvents(events);
+  //set overlapping events
+  for(var i=0; i<calendarEvents.length; i++) {
+    calendarEvents[i].setOverlappingEvents(calendarEvents);
+  }
+  var sortedCalendarEvents = calendarEvents.sort(function(a, b) {
+    var startDiff = a.start - b.start;
+    if(startDiff === 0) {
+      return b.end - a.end;
+    } else {
+      return startDiff;
+    }
+  });
 
-  var sortedOverlaps = getSortedOverlaps(calendarEvents);
+  // setup buckets of events that overlap eachother
+  var buckets = [];
+  for(var i=0; i<sortedCalendarEvents.length; i++) {
+    var calEvent = sortedCalendarEvents[i];
+    var bucket = [calEvent];
 
+    //loop over all over events 
+    for(var j=0; j<sortedCalendarEvents.length; j++) {
+      var otherEvent = sortedCalendarEvents[j];
+      if(j !== i) {
+        if(calEvent.isOverlapping(otherEvent)) {
+          bucket.push(otherEvent);
+        }
+      }
+    }
+    buckets.push(bucket);
+  }
 
-  // iterate over sortedOverlaps
-  for(var i=0; i<sortedOverlaps.length; i++) {
-    var bucket = sortedOverlaps[i];
-
-    if(bucket && bucket.length) {
-      for(var j=0; j<bucket.length; j++) {
-        var calEvent = bucket[j];
-        calEvent.setUniqOverlaps();
+  //loop over buckets and get calendar event with most overlaps
+  for(var i=0; i<buckets.length; i++) {
+    var bucket = buckets[i];
+    var leastNumberOfOverlaps = bucket.length;
+    //get smallest # of overlaps in the bucket
+    for(var j=0; j<bucket.length; j++) {
+      var calEvent = bucket[j];
+      if(calEvent.overlappingEvents.length < leastNumberOfOverlaps) {
+        leastNumberOfOverlaps = calEvent.overlappingEvents.length;
+      }
+    }
+    // get indexes
+    for(var j=0; j<bucket.length; j++) {
+      var calEvent = bucket[j];
+      if(!calEvent.wRatio || calEvent.wRatio > leastNumberOfOverlaps) {
+        calEvent.wRatio = leastNumberOfOverlaps;
       }
     }
   }
 
-  
+  //loop through all buckets
+  for(var i=0; i<buckets.length; i++) {
+    var bucket = buckets[i];
+    var overlaps = bucket.length;
+    var sortedBucket = bucket.sort(function(a, b) {
+      var startDiff = a.start - b.start;
+      if(startDiff === 0) {
+        return b.end - a.end;
+      } else {
+        return startDiff;
+      }
+    });
+
+    // set lefts & widths
+    for(var j=0; j<sortedBucket.length; j++) {
+      var calEvent = sortedBucket[j];
+      calEvent.width = W/(calEvent.wRatio+1);
+      calEvent.left = j * W/overlaps + 75;
+    }
+  }
+
 
   // render on display
   for(var i=0; i<calendarEvents.length; i++) {
     var calEvent = calendarEvents[i];
-    calEvent.createAndSetPosition(calendar, W);
+    calEvent.createAndSetPosition(calendar);
   }
   debugger;
 
