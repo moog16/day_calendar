@@ -1,12 +1,15 @@
-function CalEvent(start, end, id) {
+function CalEvent(start, end, id, a) {
   this.id = id;
   this.start = start;
   this.end = end;
+  this.a = a;
   this.top = start;
   this.height = end - start;
   this.elem = createDiv('calendar-event');
   this.overlappingEvents = [];
-  this.wRatio;
+  this.maxOverlaps;
+  this.isSet = false;
+  this.width;
   this.position;
   this.left;
 };
@@ -16,7 +19,7 @@ CalEvent.prototype.createAndSetPosition = function(calendar, W) {
   elem.style.height = this.height + 'px';
   elem.style.top = this.top + 'px';
   elem.style.left = this.left + 'px';
-  elem.style.width = this.width(W) + 'px';
+  // elem.style.width = this.width(W) + 'px';
   calendar.getElementsByClassName('calendar-day-layout')[0].appendChild(elem);
 }
 
@@ -42,6 +45,56 @@ CalEvent.prototype.setOverlappingEvents = function(calendarEvents) {
   }
 }
 
-CalEvent.prototype.width = function(W) {
-  return W/(this.wRatio+1);
+CalEvent.prototype._getSpotsTaken = function(W) {
+  var spotsTaken = {
+    lengthRemaining: W,
+    remaining: []
+  };
+  
+  for(var i=0; i<this.maxOverlaps.length; i++) {
+    var otherEvent = this.maxOverlaps[i];
+    if(otherEvent.width) {
+      spotsTaken.lengthRemaining -= otherEvent.width;
+    } else {
+      spotsTaken.remaining.push(otherEvent);
+    }
+  }
+  return spotsTaken;
+}
+
+CalEvent.prototype.setWidth = function(W) {
+  var spotsTaken = this._getSpotsTaken(W);
+  var remainingRowWidth = spotsTaken.lengthRemaining;
+  var remainingColumns = spotsTaken.remaining
+  for(var i=0; i<this.maxOverlaps.length; i++) {
+    var evt = this.maxOverlaps[i];
+    if(!evt.width) {
+      evt.width = remainingRowWidth/remainingColumns.length;
+    }
+  }
+}
+
+CalEvent.prototype.isOverlappingAll = function(overlaps) {
+  for(var i=0; i<overlaps.length; i++) {
+    if(!this.isOverlapping(overlaps[i])) {
+      return false;
+    }
+  }
+  return true;
+}
+
+CalEvent.prototype.setMaxOverlaps = function() {
+  var calEvent = this;
+  var commonOverlaps = function(overlaps, remainder) {
+    for(var i=0; i<remainder.length; i++) {
+      if(remainder[i].isOverlappingAll(overlaps)) {
+        overlaps.push(remainder[i]);
+        remainder.splice(i, 1);
+        commonOverlaps(overlaps, remainder);
+      }
+    }
+
+    return overlaps;
+  }
+  this.maxOverlaps = commonOverlaps([calEvent], calEvent.overlappingEvents);
 }

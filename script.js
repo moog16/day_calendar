@@ -7,7 +7,7 @@ function layOutDay(events) {
     for(var i=0; i<events.length; i++) {
       var e = events[i];
       var id = Math.floor(new Date().valueOf()* Math.random());
-      var calEvent = new CalEvent(e.start, e.end, id);
+      var calEvent = new CalEvent(e.start, e.end, id, e.a);
       calendarEvents.push(calEvent);
     }
     return calendarEvents;
@@ -29,57 +29,66 @@ function layOutDay(events) {
     }
   });
 
-  // setup buckets of events that overlap eachother
-  var buckets = [];
-
   for(var i=0; i<sortedCalendarEvents.length; i++) {
     var calEvent = sortedCalendarEvents[i];
-    var bucket = new Bucket();
-    bucket.add(calEvent);
-
-    //loop over all over events 
-    for(var j=0; j<sortedCalendarEvents.length; j++) {
-      var otherEvent = sortedCalendarEvents[j];
-      if(j !== i) {
-        if(calEvent.isOverlapping(otherEvent)) {
-          bucket.add(otherEvent);
-        }
-      }
-    }
-    buckets.push(bucket);
+    calEvent.setMaxOverlaps(); 
   }
+
+  var sortedMaxOverlapsByStartDate = sortedCalendarEvents.sort(function(a,b) {
+    return b.maxOverlaps.length - a.maxOverlaps.length;
+  });
+
+  // need to set width for largest rows, since 
+  // largest row size will determine width
+  for(var i=0; i<sortedMaxOverlapsByStartDate.length; i++) {
+    var calEvent = sortedMaxOverlapsByStartDate[i];
+    calEvent.setWidth(W);
+  }
+
+  debugger;
+
+
+
+
 
   //loop over buckets and get calendar event with most overlaps
-  for(var i=0; i<buckets.length; i++) {
-    var bucket = buckets[i];
-    var overlaps = bucket.events.length;
-    bucket.setleastNumberOfOverlaps();
+  // for(var i=0; i<buckets.length; i++) {
+  //   var bucket = buckets[i];
+  //   var overlaps = bucket.events.length;
+  //   bucket.setMaxNumberOfOverlaps();
     
-    // get wRatio for width calculation
-    for(var j=0; j<bucket.events.length; j++) {
-      var calEvent = bucket.events[j];
-      if(!calEvent.wRatio || calEvent.wRatio > bucket.leastNumberOfOverlaps) {
-        calEvent.wRatio = bucket.leastNumberOfOverlaps;
-      }
-    }
+  //   debugger;
+    
+  //   // get wRatio for width calculation
+  //   for(var j=0; j<bucket.events.length; j++) {
+  //     var calEvent = bucket.events[j];
+  //     if(!calEvent.wRatio
+  //       && calEvent.overlappingEvents.length <= bucket.maxNumberOfOverlaps) {
+  //         calEvent.wRatio = bucket.maxNumberOfOverlaps;
+  //     }
+  //   }
+  //   debugger;
 
-    var availablePos = range(bucket.leastNumberOfOverlaps);
+  //   var availablePos = range(bucket.leastNumberOfOverlaps);
+
+   
 
     // set lefts & widths
-    for(var j=0; j<bucket.events.length; j++) {
-      var calEvent = bucket.events[j];
-      if(calEvent.position === undefined || bucket.leastNumberOfOverlaps > calEvent.wRatio) {
-        calEvent.position = Math.min.apply(null, availablePos);
-        availablePos.removePosition(calEvent.position);
-        calEvent.left = calEvent.position * W/(calEvent.wRatio+1) + 75;
-      }
-    }
-  }
+    // for(var j=0; j<bucket.events.length; j++) {
+    //   var calEvent = bucket.events[j];
+    //   debugger
+    //   if(calEvent.position === undefined || bucket.leastNumberOfOverlaps > calEvent.wRatio) {
+    //     calEvent.position = Math.min.apply(null, availablePos);
 
+    //     availablePos.removePosition(calEvent.position);
+    //     calEvent.left = calEvent.position * W/(calEvent.wRatio+1) + 75;
+    //   }
+    // }
+  // }
 
   // render on display
-  for(var i=0; i<calendarEvents.length; i++) {
-    var calEvent = calendarEvents[i];
+  for(var i=0; i<sortedCalendarEvents.length; i++) {
+    var calEvent = sortedCalendarEvents[i];
     calEvent.createAndSetPosition(calendar, W);
   }
   debugger;
@@ -99,10 +108,10 @@ var events = [
 // {start: 150, end: 600}, 
 // {start: 560, end: 620},
 // {start: 540, end: 600}, 
-{start: 90, end: 150},
-{start: 90, end: 200}, 
-{start: 100, end: 180},
-{start: 190, end: 220},
+{start: 90, end: 150, a: 'B'},
+{start: 90, end: 200, a: 'A'}, 
+{start: 100, end: 180, a: 'C'},
+{start: 190, end: 220, a: 'D'},
 // {start: 610, end: 670} 
 ];
 
