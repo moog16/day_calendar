@@ -21,20 +21,15 @@ function layOutDay(events) {
   renderCalendar(calendar);
 
   var calendarEvents = getCalendarEvents(events);
-  
+
   //set overlapping events
   for(var i=0; i<calendarEvents.length; i++) {
     calendarEvents[i].setOverlappingEvents(calendarEvents);
   }
 
-  var sortedCalendarEvents = calendarEvents.sort(function(a, b) {
-    var startDiff = a.start - b.start;
-    if(startDiff === 0) {
-      return b.end - a.end;
-    } else {
-      return startDiff;
-    }
-  });
+  var sortedCalendarEvents = calendarEvents.sortByStartAndEndTimes();
+
+  debugger;
 
   // find largest array of common overlaps and set on
   // calEvent.maxOverlaps

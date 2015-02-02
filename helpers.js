@@ -4,6 +4,14 @@ function createDiv(className) {
   return div;
 }
 
+Array.prototype.findPos = function(p) {
+  for(var i=0; i<this.length; i++) {
+    if(this[i].position === p) {
+      return this[i];
+    }
+  }
+}
+
 function range(n) {
   var range = [];
   for(var i=0; i<n; i++) {
@@ -21,14 +29,6 @@ Array.prototype.removePosition = function(p) {
       positionNotFound = false;
     }
     i++;
-  }
-}
-
-Array.prototype.findPos = function(p) {
-  for(var i=0; i<this.length; i++) {
-    if(this[i].position === p) {
-      return this[i];
-    }
   }
 }
 
@@ -51,4 +51,15 @@ function renderTimes(calendar) {
     elem.style.top = i*30+'px';
     document.getElementsByClassName('calendar-day-times')[0].appendChild(elem);
   }
+}
+
+Array.prototype.sortByStartAndEndTimes = function() {
+  this.sort(function(a, b) {
+    var startDiff = a.start - b.start;
+    if(startDiff === 0) {
+      return b.end - a.end;
+    } else {
+      return startDiff;
+    }
+  });
 }

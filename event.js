@@ -116,12 +116,16 @@ CalEvent.prototype.setPosition = function(W) {
   var filteredEvents = this._filterEventsWithPosition(W);
   var availablePositions = filteredEvents.availablePositions;
 
+  //must sort before by start and end times
+  this.maxOverlaps.sortByStartAndEndTimes();
+
   for(var i=0; i<this.maxOverlaps.length; i++) {
     var calEvent = this.maxOverlaps[i];
     if(calEvent.left === undefined) {
       calEvent.position = Math.min.apply(null, availablePositions);
       if(calEvent.position === 0) {
         availablePositions.removePosition(calEvent.position);
+
         calEvent.left = 0;
       } else {
         var previousPos = calEvent.position -1;
