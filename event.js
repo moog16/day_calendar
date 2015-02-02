@@ -13,35 +13,32 @@ function CalEvent(start, end, id, a) {
   this.left;
 };
 
-CalEvent.prototype.plotEvent = function(calendar) {
-  var elem = this.elem;
-  elem.style.height = this.height + 'px';
-  elem.style.top = this.top + 'px';
-  elem.style.left = this.left + 'px';
-  elem.style.width = this.width + 'px';
-  calendar.getElementsByClassName('calendar-day-layout')[0].appendChild(elem);
+CalEvent.prototype.applyOffset = function(offset) {
+  this.left += offset;
 }
 
-CalEvent.prototype._filterPositions = function() {
-  var positions = {
-    available: range(this.maxOverlaps.length),
-    evts: []
+CalEvent.prototype._filterEventsWithPosition = function(W) {
+  var filteredEvents = {
+    availablePositions: range(this.maxOverlaps.length),
+    positionsOutstanding: [],
+    totalWindowRemaining: W
   };
   
-  for(var i=0; i<positions.available.length; i++) {
+  for(var i=0; i<this.maxOverlaps.length; i++) {
     var otherEvent = this.maxOverlaps[i];
-    if(otherEvent.position !== undefined) {
-      positions.available.removePosition(otherEvent.position);
+    if(otherEvent.position !== undefined) { // if there is a position assigned to it already
+      filteredEvents.availablePositions.removePosition(otherEvent.position);
+      filteredEvents.totalWindowRemaining -= otherEvent.width;
     } else {
-      positions.evts.push(otherEvent);
+      filteredEvents.positionsOutstanding.push(otherEvent);
     }
   }
-  return positions;
+  return filteredEvents;
 }
 
-CalEvent.prototype._filterSpotsTaken = function(W) {
+CalEvent.prototype._filterEventsWithWidth = function(W) {
   // used only in setWidth()
-  var spotsTaken = {
+  var filteredEvents = {
     lengthRemaining: W,
     remaining: []
   };
@@ -49,12 +46,12 @@ CalEvent.prototype._filterSpotsTaken = function(W) {
   for(var i=0; i<this.maxOverlaps.length; i++) {
     var otherEvent = this.maxOverlaps[i];
     if(otherEvent.width) {
-      spotsTaken.lengthRemaining -= otherEvent.width;
+      filteredEvents.lengthRemaining -= otherEvent.width;
     } else {
-      spotsTaken.remaining.push(otherEvent);
+      filteredEvents.remaining.push(otherEvent);
     }
   }
-  return spotsTaken;
+  return filteredEvents;
 }
 
 CalEvent.prototype.isOverlapping = function(otherEvent) {
@@ -73,6 +70,15 @@ CalEvent.prototype.isOverlappingAll = function(overlaps) {
     }
   }
   return true;
+}
+
+CalEvent.prototype.plotEvent = function(calendar) {
+  var elem = this.elem;
+  elem.style.height = this.height + 'px';
+  elem.style.top = this.top + 'px';
+  elem.style.left = this.left + 'px';
+  elem.style.width = this.width + 'px';
+  calendar.getElementsByClassName('calendar-day-layout')[0].appendChild(elem);
 }
 
 // have the calEvent be aware of the other overlapping events 
@@ -107,23 +113,32 @@ CalEvent.prototype.setMaxOverlaps = function() {
 }
 
 CalEvent.prototype.setPosition = function(W) {
-  var positions = this._filterPositions();
-  var evts = positions.evts;
-  var availablePositions = positions.available;
+  var filteredEvents = this._filterEventsWithPosition(W);
+  var availablePositions = filteredEvents.availablePositions;
 
-  for(var i=0; i<evts.length; i++) {
-    var calEvent = evts[i];
-    calEvent.position = Math.min.apply(null, availablePositions);
-    calEvent.left = calEvent.position * W/this.maxOverlaps.length + 75;
-    availablePositions.removePosition(calEvent.position);
+  for(var i=0; i<this.maxOverlaps.length; i++) {
+    var calEvent = this.maxOverlaps[i];
+    if(calEvent.left === undefined) {
+      calEvent.position = Math.min.apply(null, availablePositions);
+      if(calEvent.position === 0) {
+        availablePositions.removePosition(calEvent.position);
+        calEvent.left = 0;
+      } else {
+        var previousPos = calEvent.position -1;
+        var previousRowEvent = this.maxOverlaps.findPos(previousPos);
+        availablePositions.removePosition(calEvent.position);
+
+        calEvent.left = previousRowEvent.left + previousRowEvent.width;
+      }
+    }
   }
 }
 
 
 CalEvent.prototype.setWidth = function(W) {
-  var spotsTaken = this._filterSpotsTaken(W);
-  var remainingRowWidth = spotsTaken.lengthRemaining;
-  var remainingColumns = spotsTaken.remaining
+  var filteredEvents = this._filterEventsWithWidth(W);
+  var remainingRowWidth = filteredEvents.lengthRemaining;
+  var remainingColumns = filteredEvents.remaining
   for(var i=0; i<this.maxOverlaps.length; i++) {
     var evt = this.maxOverlaps[i];
     if(!evt.width) {

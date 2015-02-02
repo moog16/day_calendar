@@ -24,6 +24,14 @@ Array.prototype.removePosition = function(p) {
   }
 }
 
+Array.prototype.findPos = function(p) {
+  for(var i=0; i<this.length; i++) {
+    if(this[i].position === p) {
+      return this[i];
+    }
+  }
+}
+
 function renderTimes(calendar) {
   var dayLength = 720; // in minutes; SAME AS HEIGHT
   var dayBegin = 540;

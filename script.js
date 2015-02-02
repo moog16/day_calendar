@@ -13,6 +13,11 @@ function layOutDay(events) {
     return calendarEvents;
   }
 
+  function renderCalendar(calendar) {
+    calendar.appendChild(createDiv('calendar-day-layout'));
+    renderTimes(calendar);
+  }
+
   renderCalendar(calendar);
 
   var calendarEvents = getCalendarEvents(events);
@@ -35,7 +40,7 @@ function layOutDay(events) {
     calEvent.setMaxOverlaps(); 
   }
 
-  var sortedMaxOverlapsByStartDate = sortedCalendarEvents.sort(function(a,b) {
+  var sortedMaxOverlapsByStartDate = sortedCalendarEvents.sort(function(a, b) {
     return b.maxOverlaps.length - a.maxOverlaps.length;
   });
 
@@ -46,37 +51,31 @@ function layOutDay(events) {
     calEvent.setWidth(W);
   }
 
-  // set position
-
-
   // set lefts & widths
   for(var i=0; i<sortedMaxOverlapsByStartDate.length; i++) {
     var calEvent = sortedMaxOverlapsByStartDate[i];
     calEvent.setPosition(W);
   }
 
+  for(var i=0; i<sortedMaxOverlapsByStartDate.length; i++) {
+    sortedMaxOverlapsByStartDate[i].applyOffset(75);
+  }
+
   // render on display
-  for(var i=0; i<sortedCalendarEvents.length; i++) {
-    var calEvent = sortedCalendarEvents[i];
+  for(var i=0; i<sortedMaxOverlapsByStartDate.length; i++) {
+    var calEvent = sortedMaxOverlapsByStartDate[i];
     calEvent.plotEvent(calendar);
   }
   debugger;
-
-
-}
-
-function renderCalendar(calendar) {
-  calendar.appendChild(createDiv('calendar-day-layout'));
-  renderTimes(calendar);
 }
 
 
 
 // var events = [ {start: 30, end: 150}, {start: 540, end: 600}, {start: 560, end: 620}, {start: 610, end: 670} ];
 var events = [ 
-// {start: 150, end: 600}, 
 // {start: 560, end: 620},
 // {start: 540, end: 600}, 
+{start: 150, end: 600, a: 'E'},
 {start: 90, end: 150, a: 'B'},
 {start: 90, end: 200, a: 'A'}, 
 {start: 100, end: 180, a: 'C'},
