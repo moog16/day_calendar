@@ -21,6 +21,7 @@ function layOutDay(events) {
   renderCalendar(calendar);
 
   var calendarEvents = getCalendarEvents(events);
+  
   //set overlapping events
   for(var i=0; i<calendarEvents.length; i++) {
     calendarEvents[i].setOverlappingEvents(calendarEvents);
@@ -35,6 +36,8 @@ function layOutDay(events) {
     }
   });
 
+  // find largest array of common overlaps and set on
+  // calEvent.maxOverlaps
   for(var i=0; i<sortedCalendarEvents.length; i++) {
     var calEvent = sortedCalendarEvents[i];
     calEvent.setMaxOverlaps(); 
@@ -51,12 +54,13 @@ function layOutDay(events) {
     calEvent.setWidth(W);
   }
 
-  // set lefts & widths
+  // set position/lefts
   for(var i=0; i<sortedMaxOverlapsByStartDate.length; i++) {
     var calEvent = sortedMaxOverlapsByStartDate[i];
     calEvent.setPosition(W);
   }
 
+  //apply offset for UI
   for(var i=0; i<sortedMaxOverlapsByStartDate.length; i++) {
     sortedMaxOverlapsByStartDate[i].applyOffset(75);
   }
