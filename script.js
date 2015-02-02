@@ -20,6 +20,7 @@ function layOutDay(events) {
   for(var i=0; i<calendarEvents.length; i++) {
     calendarEvents[i].setOverlappingEvents(calendarEvents);
   }
+
   var sortedCalendarEvents = calendarEvents.sort(function(a, b) {
     var startDiff = a.start - b.start;
     if(startDiff === 0) {
@@ -45,51 +46,19 @@ function layOutDay(events) {
     calEvent.setWidth(W);
   }
 
-  debugger;
+  // set position
 
 
-
-
-
-  //loop over buckets and get calendar event with most overlaps
-  // for(var i=0; i<buckets.length; i++) {
-  //   var bucket = buckets[i];
-  //   var overlaps = bucket.events.length;
-  //   bucket.setMaxNumberOfOverlaps();
-    
-  //   debugger;
-    
-  //   // get wRatio for width calculation
-  //   for(var j=0; j<bucket.events.length; j++) {
-  //     var calEvent = bucket.events[j];
-  //     if(!calEvent.wRatio
-  //       && calEvent.overlappingEvents.length <= bucket.maxNumberOfOverlaps) {
-  //         calEvent.wRatio = bucket.maxNumberOfOverlaps;
-  //     }
-  //   }
-  //   debugger;
-
-  //   var availablePos = range(bucket.leastNumberOfOverlaps);
-
-   
-
-    // set lefts & widths
-    // for(var j=0; j<bucket.events.length; j++) {
-    //   var calEvent = bucket.events[j];
-    //   debugger
-    //   if(calEvent.position === undefined || bucket.leastNumberOfOverlaps > calEvent.wRatio) {
-    //     calEvent.position = Math.min.apply(null, availablePos);
-
-    //     availablePos.removePosition(calEvent.position);
-    //     calEvent.left = calEvent.position * W/(calEvent.wRatio+1) + 75;
-    //   }
-    // }
-  // }
+  // set lefts & widths
+  for(var i=0; i<sortedMaxOverlapsByStartDate.length; i++) {
+    var calEvent = sortedMaxOverlapsByStartDate[i];
+    calEvent.setPosition(W);
+  }
 
   // render on display
   for(var i=0; i<sortedCalendarEvents.length; i++) {
     var calEvent = sortedCalendarEvents[i];
-    calEvent.createAndSetPosition(calendar, W);
+    calEvent.plotEvent(calendar);
   }
   debugger;
 

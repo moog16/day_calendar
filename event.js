@@ -8,12 +8,12 @@ function CalEvent(start, end, id, a) {
   this.elem = createDiv('calendar-event');
   this.overlappingEvents = [];
   this.maxOverlaps = [];
-  this.width;
   this.position;
+  this.width;
   this.left;
 };
 
-CalEvent.prototype.createAndSetPosition = function(calendar, W) {
+CalEvent.prototype.plotEvent = function(calendar) {
   var elem = this.elem;
   elem.style.height = this.height + 'px';
   elem.style.top = this.top + 'px';
@@ -22,7 +22,25 @@ CalEvent.prototype.createAndSetPosition = function(calendar, W) {
   calendar.getElementsByClassName('calendar-day-layout')[0].appendChild(elem);
 }
 
-CalEvent.prototype._getSpotsTaken = function(W) {
+CalEvent.prototype._filterPositions = function() {
+  var positions = {
+    available: range(this.maxOverlaps.length),
+    evts: []
+  };
+  
+  for(var i=0; i<positions.available.length; i++) {
+    var otherEvent = this.maxOverlaps[i];
+    if(otherEvent.position !== undefined) {
+      positions.available.removePosition(otherEvent.position);
+    } else {
+      positions.evts.push(otherEvent);
+    }
+  }
+  return positions;
+}
+
+CalEvent.prototype._filterSpotsTaken = function(W) {
+  // used only in setWidth()
   var spotsTaken = {
     lengthRemaining: W,
     remaining: []
@@ -71,6 +89,8 @@ CalEvent.prototype.setOverlappingEvents = function(calendarEvents) {
 }
 
 CalEvent.prototype.setMaxOverlaps = function() {
+  // finds all largest common overlapping sets of an event
+  // sets this array on the event as maxOverlaps
   var calEvent = this;
   var commonOverlaps = function(overlaps, remainder) {
     for(var i=0; i<remainder.length; i++) {
@@ -86,8 +106,22 @@ CalEvent.prototype.setMaxOverlaps = function() {
   this.maxOverlaps = commonOverlaps([calEvent], calEvent.overlappingEvents);
 }
 
+CalEvent.prototype.setPosition = function(W) {
+  var positions = this._filterPositions();
+  var evts = positions.evts;
+  var availablePositions = positions.available;
+
+  for(var i=0; i<evts.length; i++) {
+    var calEvent = evts[i];
+    calEvent.position = Math.min.apply(null, availablePositions);
+    calEvent.left = calEvent.position * W/this.maxOverlaps.length + 75;
+    availablePositions.removePosition(calEvent.position);
+  }
+}
+
+
 CalEvent.prototype.setWidth = function(W) {
-  var spotsTaken = this._getSpotsTaken(W);
+  var spotsTaken = this._filterSpotsTaken(W);
   var remainingRowWidth = spotsTaken.lengthRemaining;
   var remainingColumns = spotsTaken.remaining
   for(var i=0; i<this.maxOverlaps.length; i++) {
