@@ -54,7 +54,6 @@ function layOutDay(events) {
     var bucket = buckets[i];
     var overlaps = bucket.events.length;
     bucket.setleastNumberOfOverlaps();
-    debugger;
     
     // get wRatio for width calculation
     for(var j=0; j<bucket.events.length; j++) {
@@ -69,12 +68,13 @@ function layOutDay(events) {
     // set lefts & widths
     for(var j=0; j<bucket.events.length; j++) {
       var calEvent = bucket.events[j];
+      debugger;
       if(calEvent.position === undefined) {
         calEvent.position = Math.min.apply(null, availablePos);
         availablePos.splice(calEvent.position, 1);
+        // debugger;
         calEvent.left = calEvent.position * W/(calEvent.wRatio+1) + 75;
       }
-      
     }
   }
 
@@ -104,6 +104,7 @@ var events = [
 {start: 90, end: 150},
 {start: 90, end: 200}, 
 {start: 100, end: 180},
+// {start: 190, end: 220},
 // {start: 610, end: 670} 
 ];
 
