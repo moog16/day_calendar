@@ -3,12 +3,25 @@ function createDiv(className) {
   div.className = className;
   return div;
 }
+
 function range(n) {
   var range = [];
   for(var i=0; i<=n; i++) {
     range.push(i);
   }
   return range;
+}
+
+Array.prototype.removePosition = function(p) {
+  var positionNotFound = true;
+  var i = 0;
+  while(positionNotFound && i < this.length) {
+    if(this[i] === p) {
+      this.splice(i, 1);
+      positionNotFound = false;
+    }
+    i++;
+  }
 }
 
 function renderTimes(calendar) {
