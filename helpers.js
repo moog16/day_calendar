@@ -5,10 +5,18 @@ function createDiv(className) {
 }
 
 Array.prototype.findPos = function(p) {
+  // finds item in array of position p,
+  // returns item
   for(var i=0; i<this.length; i++) {
     if(this[i].position === p) {
       return this[i];
     }
+  }
+}
+
+Array.prototype.forEach = function(callback) {
+  for(var i=0; i<this.length; i++) {
+    callback(this[i], i, this);
   }
 }
 
@@ -21,6 +29,8 @@ function range(n) {
 }
 
 Array.prototype.removePosition = function(p) {
+  // finds item in array of value p,
+  // removes it from the array
   var positionNotFound = true;
   var i = 0;
   while(positionNotFound && i < this.length) {
@@ -33,6 +43,7 @@ Array.prototype.removePosition = function(p) {
 }
 
 function renderTimes(calendar) {
+  // render the times on the left hand side
   var dayLength = 720; // in minutes; SAME AS HEIGHT
   var dayBegin = 540;
   var dayLayout = calendar.getElementsByClassName('calendar-day-layout')[0];

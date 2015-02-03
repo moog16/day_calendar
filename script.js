@@ -38,27 +38,25 @@ function layOutDay(events) {
 
   // need to set width for largest rows, since 
   // largest row size will determine width
-  for(var i=0; i<sortedLargestRowByStartDate.length; i++) {
-    var calEvent = sortedLargestRowByStartDate[i];
+
+  sortedLargestRowByStartDate.forEach(function(calEvent) {
     calEvent.setWidth(W);
-  }
+  });
 
   // set position/lefts
-  for(var i=0; i<sortedLargestRowByStartDate.length; i++) {
-    var calEvent = sortedLargestRowByStartDate[i];
+  sortedLargestRowByStartDate.forEach(function(calEvent) {
     calEvent.setPosition(W);
-  }
+  });
 
   //apply offset for UI
-  for(var i=0; i<sortedLargestRowByStartDate.length; i++) {
-    sortedLargestRowByStartDate[i].applyOffset(75);
-  }
+  sortedLargestRowByStartDate.forEach(function(calEvent) {
+    calEvent.applyOffset(75);
+  });
 
   // render on display
-  for(var i=0; i<sortedLargestRowByStartDate.length; i++) {
-    var calEvent = sortedLargestRowByStartDate[i];
+  sortedLargestRowByStartDate.forEach(function(calEvent) {
     calEvent.plotEvent(calendar);
-  }
+  });
   debugger;
 }
 
