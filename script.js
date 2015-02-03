@@ -26,37 +26,37 @@ function layOutDay(events) {
   }
 
   // find largest array of common overlaps and set on
-  // calEvent.maxOverlaps
+  // calEvent.largestRow
   for(var i=0; i<calendarEvents.length; i++) {
     var calEvent = calendarEvents[i];
-    calEvent.setMaxOverlaps(); 
+    calEvent.setLargestRow(); 
   }
 
-  var sortedMaxOverlapsByStartDate = calendarEvents.sort(function(a, b) {
-    return b.maxOverlaps.length - a.maxOverlaps.length;
+  var sortedLargestRowByStartDate = calendarEvents.sort(function(a, b) {
+    return b.largestRow.length - a.largestRow.length;
   });
 
   // need to set width for largest rows, since 
   // largest row size will determine width
-  for(var i=0; i<sortedMaxOverlapsByStartDate.length; i++) {
-    var calEvent = sortedMaxOverlapsByStartDate[i];
+  for(var i=0; i<sortedLargestRowByStartDate.length; i++) {
+    var calEvent = sortedLargestRowByStartDate[i];
     calEvent.setWidth(W);
   }
 
   // set position/lefts
-  for(var i=0; i<sortedMaxOverlapsByStartDate.length; i++) {
-    var calEvent = sortedMaxOverlapsByStartDate[i];
+  for(var i=0; i<sortedLargestRowByStartDate.length; i++) {
+    var calEvent = sortedLargestRowByStartDate[i];
     calEvent.setPosition(W);
   }
 
   //apply offset for UI
-  for(var i=0; i<sortedMaxOverlapsByStartDate.length; i++) {
-    sortedMaxOverlapsByStartDate[i].applyOffset(75);
+  for(var i=0; i<sortedLargestRowByStartDate.length; i++) {
+    sortedLargestRowByStartDate[i].applyOffset(75);
   }
 
   // render on display
-  for(var i=0; i<sortedMaxOverlapsByStartDate.length; i++) {
-    var calEvent = sortedMaxOverlapsByStartDate[i];
+  for(var i=0; i<sortedLargestRowByStartDate.length; i++) {
+    var calEvent = sortedLargestRowByStartDate[i];
     calEvent.plotEvent(calendar);
   }
   debugger;
