@@ -4,12 +4,11 @@ function layOutDay(events) {
 
   function getCalendarEvents(events) {
     var calendarEvents = [];
-    for(var i=0; i<events.length; i++) {
-      var e = events[i];
+    events.forEach(function(e) {
       var id = Math.floor(new Date().valueOf()* Math.random());
       var calEvent = new CalEvent(e.start, e.end, id, e.a);
       calendarEvents.push(calEvent);
-    }
+    });
     return calendarEvents;
   }
 
@@ -21,16 +20,14 @@ function layOutDay(events) {
   calendarEvents.sortByStartAndEndTimes();
 
   //set overlapping events
-  for(var i=0; i<calendarEvents.length; i++) {
-    calendarEvents[i].setOverlappingEvents(calendarEvents);
-  }
+  calendarEvents.forEach(function(calEvent) {
+    calEvent.setOverlappingEvents(calendarEvents);
+  });
 
   // find largest array of common overlaps and set on
-  // calEvent.largestRow
-  for(var i=0; i<calendarEvents.length; i++) {
-    var calEvent = calendarEvents[i];
-    calEvent.setLargestRow(); 
-  }
+  calendarEvents.forEach(function(calEvent) {
+    calEvent.setLargestRow();
+  });
 
   var sortedLargestRowByStartDate = calendarEvents.sort(function(a, b) {
     return b.largestRow.length - a.largestRow.length;
