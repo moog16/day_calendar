@@ -3,6 +3,8 @@ function CalEvent(start, end, id, a) {
   this.start = start;
   this.end = end;
   this.a = a; // delete
+  this.title = 'Sample Item';
+  this.location = 'Sample Location';
   this.top = start;
   this.height = end - start;
   this.elem = createDiv('calendar-event');
@@ -74,10 +76,18 @@ CalEvent.prototype.isOverlappingAll = function(overlaps) {
 
 CalEvent.prototype.plotEvent = function(calendar) {
   var elem = this.elem;
+  var title = document.createElement('h4');
+  title.className = 'title';
+  var location = document.createElement('h6');
+  location.className = 'location';
+  title.textContent = this.title;
+  location.textContent = this.location;
   elem.style.height = this.height + 'px';
   elem.style.top = this.top + 'px';
   elem.style.left = this.left + 'px';
   elem.style.width = this.width + 'px';
+  elem.appendChild(title);
+  elem.appendChild(location);
   calendar.getElementsByClassName('calendar-day-layout')[0].appendChild(elem);
 }
 

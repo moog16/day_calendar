@@ -27,18 +27,17 @@ function layOutDay(events) {
     calendarEvents[i].setOverlappingEvents(calendarEvents);
   }
 
-  var sortedCalendarEvents = calendarEvents.sortByStartAndEndTimes();
-
-  debugger;
+  // sort by start and end times
+  calendarEvents.sortByStartAndEndTimes();
 
   // find largest array of common overlaps and set on
   // calEvent.maxOverlaps
-  for(var i=0; i<sortedCalendarEvents.length; i++) {
-    var calEvent = sortedCalendarEvents[i];
+  for(var i=0; i<calendarEvents.length; i++) {
+    var calEvent = calendarEvents[i];
     calEvent.setMaxOverlaps(); 
   }
 
-  var sortedMaxOverlapsByStartDate = sortedCalendarEvents.sort(function(a, b) {
+  var sortedMaxOverlapsByStartDate = calendarEvents.sort(function(a, b) {
     return b.maxOverlaps.length - a.maxOverlaps.length;
   });
 
@@ -72,14 +71,14 @@ function layOutDay(events) {
 
 // var events = [ {start: 30, end: 150}, {start: 540, end: 600}, {start: 560, end: 620}, {start: 610, end: 670} ];
 var events = [ 
-// {start: 560, end: 620},
-// {start: 540, end: 600}, 
-{start: 150, end: 600, a: 'E'},
-{start: 90, end: 150, a: 'B'},
-{start: 90, end: 200, a: 'A'}, 
-{start: 100, end: 180, a: 'C'},
-{start: 190, end: 220, a: 'D'},
-// {start: 610, end: 670} 
+{start: 560, end: 620, a:'C'},
+{start: 540, end: 600, a:'B'}, 
+{start: 610, end: 670, a:'A'}, 
+{start: 150, end: 600, a: 'D'},
+{start: 90, end: 150},
+{start: 90, end: 200}, 
+{start: 100, end: 180},
+{start: 190, end: 220},
 ];
 
 
