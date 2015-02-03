@@ -1,11 +1,13 @@
+body {
+  font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial; 
+}
+
 .calendar-day-layout {
   height: 720px;
   width: 600px;
   padding: 0 10px;
   display: inline-block;
   background: #F1F1F1;
-
-  border: 1px solid;
 }
 
 .calendar-day-times {
@@ -13,8 +15,6 @@
   width: 55px;
   display: inline-block;
   float: left;
-
-  border: 1px solid;
 }
 
 
@@ -40,8 +40,6 @@
 .title,
 .location {
   margin: 0 5px;
-  font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; 
-  font-weight: 500;
 }
 
 .title {

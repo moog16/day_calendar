@@ -45,11 +45,22 @@ function renderTimes(calendar) {
     var hours = minutes/60;
     var hour = Math.floor(hours%12) || '12';
     var minute = hours%1*60 || '00';
-    var periodOfDay = minute !== 30 ? (minutes >= 720 ? 'pm' : 'am') : '';
-    var time = hour + ':' + minute + periodOfDay;
-    elem.textContent = time;
+    var periodOfDay = minute !== 30 ? (minutes >= 720 ? 'PM' : 'AM') : '';
+    var timeElem = document.createElement('span');
+    if(minute !== 30) {
+      timeElem.className = 'on-hour';
+    }
+    var periodOfDayElem = document.createElement('span');
+    periodOfDayElem.className = 'period-of-day';
+    timeElem.textContent = hour + ':' + minute;
+    periodOfDayElem.textContent = periodOfDay
     elem.style.top = i*30+'px';
-    document.getElementsByClassName('calendar-day-times')[0].appendChild(elem);
+    var timeSlot = document.getElementsByClassName('calendar-day-times')[0];
+    elem.appendChild(timeElem);
+    if(periodOfDayElem.textContent !== '') {
+      elem.appendChild(periodOfDayElem);
+    }
+    timeSlot.appendChild(elem);
   }
 }
 
