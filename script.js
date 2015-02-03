@@ -13,22 +13,17 @@ function layOutDay(events) {
     return calendarEvents;
   }
 
-  function renderCalendar(calendar) {
-    calendar.appendChild(createDiv('calendar-day-layout'));
-    renderTimes(calendar);
-  }
 
-  renderCalendar(calendar);
+  calendar.appendChild(createDiv('calendar-day-layout'));
 
   var calendarEvents = getCalendarEvents(events);
+  // sort by start and end times
+  calendarEvents.sortByStartAndEndTimes();
 
   //set overlapping events
   for(var i=0; i<calendarEvents.length; i++) {
     calendarEvents[i].setOverlappingEvents(calendarEvents);
   }
-
-  // sort by start and end times
-  calendarEvents.sortByStartAndEndTimes();
 
   // find largest array of common overlaps and set on
   // calEvent.maxOverlaps
@@ -81,5 +76,5 @@ var events = [
 {start: 190, end: 220},
 ];
 
-
+renderTimes(calendar);
 layOutDay(events);
