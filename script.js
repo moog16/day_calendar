@@ -12,7 +12,16 @@ function layOutDay(events) {
     return calendarEvents;
   }
 
+  function clearCalendar() {
+    var layouts = document.getElementsByClassName('calendar-day-layout');
+    if(layouts.length) {
+      for(var i=0; i<layouts.length; i++) {
+        calendar.removeChild(layouts[i]);
+      }
+    }
+  }
 
+  clearCalendar();
   calendar.appendChild(createDiv('calendar-day-layout'));
 
   var calendarEvents = getCalendarEvents(events);
@@ -33,8 +42,7 @@ function layOutDay(events) {
     return b.largestRow.length - a.largestRow.length;
   });
 
-  // need to set width for largest rows, since 
-  // largest row size will determine width
+  // set width for largest number event rows first
   sortedLargestRowByStartDate.forEach(function(calEvent) {
     calEvent.setWidth(W);
   });
@@ -53,21 +61,20 @@ function layOutDay(events) {
   sortedLargestRowByStartDate.forEach(function(calEvent) {
     calEvent.plotEvent(calendar);
   });
-  debugger;
 }
 
 
 
 // var events = [ {start: 30, end: 150}, {start: 540, end: 600}, {start: 560, end: 620}, {start: 610, end: 670} ];
 var events = [ 
-{start: 560, end: 620, a:'C'},
+{start: 610, end: 670, a:'A'},  // too long
 {start: 540, end: 600, a:'B'}, 
-{start: 610, end: 670, a:'A'}, 
+{start: 560, end: 620, a:'C'},
 {start: 150, end: 600, a: 'D'},
+{start: 190, end: 220},
+{start: 100, end: 180},
 {start: 90, end: 150},
 {start: 90, end: 200}, 
-{start: 100, end: 180},
-{start: 190, end: 220},
 ];
 
 renderTimes(calendar);
