@@ -1,4 +1,4 @@
-function CalEvent(start, end, id, a) {
+function CalEvent(start, end, id, a) { // remove a
   this.id = id;
   this.start = start;
   this.end = end;
