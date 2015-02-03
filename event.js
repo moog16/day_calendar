@@ -26,15 +26,15 @@ CalEvent.prototype._filterEventsWithPosition = function(W) {
     totalWindowRemaining: W
   };
   
-  for(var i=0; i<this.largestRow.length; i++) {
-    var otherEvent = this.largestRow[i];
+  this.largestRow.forEach(function(otherEvent) {
     if(otherEvent.position !== undefined) { // if there is a position assigned to it already
       filteredEvents.availablePositions.removePosition(otherEvent.position);
       filteredEvents.totalWindowRemaining -= otherEvent.width;
     } else {
       filteredEvents.positionsOutstanding.push(otherEvent);
     }
-  }
+  });
+
   return filteredEvents;
 }
 
@@ -44,15 +44,14 @@ CalEvent.prototype._filterEventsWithWidth = function(W) {
     lengthRemaining: W,
     remaining: []
   };
-  
-  for(var i=0; i<this.largestRow.length; i++) {
-    var otherEvent = this.largestRow[i];
+
+  this.largestRow.forEach(function(otherEvent) {
     if(otherEvent.width) {
       filteredEvents.lengthRemaining -= otherEvent.width;
     } else {
       filteredEvents.remaining.push(otherEvent);
     }
-  }
+  });
   return filteredEvents;
 }
 
@@ -153,10 +152,9 @@ CalEvent.prototype.setWidth = function(W) {
   var filteredEvents = this._filterEventsWithWidth(W);
   var remainingRowWidth = filteredEvents.lengthRemaining;
   var remainingColumns = filteredEvents.remaining
-  for(var i=0; i<this.largestRow.length; i++) {
-    var evt = this.largestRow[i];
+  this.largestRow.forEach(function(evt) {
     if(!evt.width) {
       evt.width = remainingRowWidth/remainingColumns.length;
     }
-  }
+  });
 }

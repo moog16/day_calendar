@@ -35,7 +35,6 @@ function layOutDay(events) {
 
   // need to set width for largest rows, since 
   // largest row size will determine width
-
   sortedLargestRowByStartDate.forEach(function(calEvent) {
     calEvent.setWidth(W);
   });
