@@ -81,31 +81,57 @@ CalEvent.prototype.setLargestRow = function() {
   this.largestRow = commonOverlaps([calEvent], calEvent.overlappingEvents);
 }
 
-CalEvent.prototype.setPosition = function(W) {
-  var availablePositions = _.filter(_.range(this.largestRow.length), function(otherEvent) {
-    return otherEvent.position === undefined;
+CalEvent.prototype._filterEventsWithPosition = function(W) {
+  var availablePositions = _.range(this.largestRow.length);
+  
+  _.each(this.largestRow, function(otherEvent) {
+    if(otherEvent.position !== undefined) { // if there is a position assigned to it already
+      availablePositions = _.without(availablePositions, otherEvent.position);
+    }
   });
+
+  return availablePositions;
+}
+
+CalEvent.prototype.setPosition = function(W) {
+  var availablePositions = this._filterEventsWithPosition(W);
 
   //must sort before by start and end times
   this.largestRow.sortByStartAndEndTimes();
 
-  for(var i=0; i<this.largestRow.length; i++) {
-    var calEvent = this.largestRow[i];
+  _.each(this.largestRow, function(calEvent, i, largestRow) {
     if(calEvent.left === undefined) {
       calEvent.position = _.min(availablePositions);
       if(calEvent.position === 0) {
         calEvent.left = 0;
       } else {
-        var previousPos = calEvent.position - 1;
-        var previousRowEvent = _.find(this.largestRow, function(otherEvent) { 
-          return otherEvent.position === previousPos;
+        var previousPos = calEvent.position -1;
+        // var previousRowEvent = largestRow.findPos(previousPos);
+        var previousRowEvent = _.find(largestRow, function(otherEvent) {
+          return previousPos === otherEvent.position;
         });
 
         calEvent.left = previousRowEvent.left + previousRowEvent.width;
       }
       availablePositions = _.without(availablePositions, calEvent.position);
     }
-  }
+  });
+}
+CalEvent.prototype._filterEventsWithWidth = function(W) {
+  // used only in setWidth()
+  var filteredEvents = {
+    lengthRemaining: W,
+    remaining: []
+  };
+
+  _.each(this.largestRow, function(otherEvent) {
+    if(otherEvent.width) {
+      filteredEvents.lengthRemaining -= otherEvent.width;
+    } else {
+      filteredEvents.remaining.push(otherEvent);
+    }
+  });
+  return filteredEvents;
 }
 
 CalEvent.prototype.setWidth = function(W) {
