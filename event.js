@@ -117,22 +117,6 @@ CalEvent.prototype.setPosition = function(W) {
     }
   }
 }
-CalEvent.prototype._filterEventsWithWidth = function(W) {
-  // used only in setWidth()
-  var filteredEvents = {
-    lengthRemaining: W,
-    remaining: []
-  };
-
-  _.each(this.largestRow, function(otherEvent) {
-    if(otherEvent.width) {
-      filteredEvents.lengthRemaining -= otherEvent.width;
-    } else {
-      filteredEvents.remaining.push(otherEvent);
-    }
-  });
-  return filteredEvents;
-}
 
 CalEvent.prototype.setWidth = function(W) {
   var remainingRowWidth = _.reduce(this.largestRow, function(sum, otherEvent) {
