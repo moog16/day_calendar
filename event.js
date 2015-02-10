@@ -106,8 +106,10 @@ CalEvent.prototype.setPosition = function(W) {
       if(calEvent.position === 0) {
         calEvent.left = 0;
       } else {
-        var previousPos = calEvent.position -1;
-        var previousRowEvent = this.largestRow.findPos(previousPos);
+        var previousPos = calEvent.position - 1;
+        var previousRowEvent = _.find(this.largestRow, function(otherEvent) { 
+          return otherEvent.position === previousPos;
+        });
 
         calEvent.left = previousRowEvent.left + previousRowEvent.width;
       }

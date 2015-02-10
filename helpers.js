@@ -4,16 +4,6 @@ function createDiv(className) {
   return div;
 }
 
-Array.prototype.findPos = function(p) {
-  // finds item in array of position p,
-  // returns item
-  for(var i=0; i<this.length; i++) {
-    if(this[i].position === p) {
-      return this[i];
-    }
-  }
-}
-
 function renderTimes(calendar) {
   // render the times on the left hand side
   var dayLength = 720; // in minutes; SAME AS HEIGHT
