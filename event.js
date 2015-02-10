@@ -64,12 +64,9 @@ CalEvent.prototype.isOverlapping = function(otherEvent) {
 }
 
 CalEvent.prototype.isOverlappingAll = function(overlaps) {
-  for(var i=0; i<overlaps.length; i++) {
-    if(!this.isOverlapping(overlaps[i])) {
-      return false;
-    }
-  }
-  return true;
+  return _.every(overlaps, function(overlap) {
+    return this.isOverlapping(overlap);
+  }, this);
 }
 
 CalEvent.prototype.plotEvent = function(calendar) {

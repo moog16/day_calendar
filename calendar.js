@@ -25,15 +25,14 @@ Calendar.prototype.layOutDay = function(events) {
   this.clearCalendar();
   this.elem.appendChild(createDiv('calendar-day-layout'));
 
-  //set overlapping events
   _.each(this.events, function(calEvent, i , allEvents) {
     calEvent.setOverlappingEvents(allEvents);
-  }, this);
+  });
 
-  // find largest array of common overlaps and set on
+  // find largest array of common overlaps and set on calEvent
   _.each(this.events, function(calEvent) {
     calEvent.setLargestRow();
-  }, this);
+  });
 
   this.sortedLargestRowByStartDate = this.events.sort(function(a, b) {
     return b.largestRow.length - a.largestRow.length;
