@@ -37,22 +37,7 @@ CalEvent.prototype._filterEventsWithPosition = function(W) {
   return filteredEvents;
 }
 
-CalEvent.prototype._filterEventsWithWidth = function(W) {
-  // used only in setWidth()
-  var filteredEvents = {
-    lengthRemaining: W,
-    remaining: []
-  };
 
-  this.largestRow.forEach(function(otherEvent) {
-    if(otherEvent.width) {
-      filteredEvents.lengthRemaining -= otherEvent.width;
-    } else {
-      filteredEvents.remaining.push(otherEvent);
-    }
-  });
-  return filteredEvents;
-}
 
 CalEvent.prototype.isOverlapping = function(otherEvent) {
   var start = this.start;
@@ -142,15 +127,42 @@ CalEvent.prototype.setPosition = function(W) {
     }
   }
 }
+CalEvent.prototype._filterEventsWithWidth = function(W) {
+  // used only in setWidth()
+  var filteredEvents = {
+    lengthRemaining: W,
+    remaining: []
+  };
 
+  _.each(this.largestRow, function(otherEvent) {
+    if(otherEvent.width) {
+      filteredEvents.lengthRemaining -= otherEvent.width;
+    } else {
+      filteredEvents.remaining.push(otherEvent);
+    }
+  });
+  return filteredEvents;
+}
 
 CalEvent.prototype.setWidth = function(W) {
-  var filteredEvents = this._filterEventsWithWidth(W);
-  var remainingRowWidth = filteredEvents.lengthRemaining;
-  var remainingColumns = filteredEvents.remaining
-  this.largestRow.forEach(function(evt) {
-    if(!evt.width) {
-      evt.width = remainingRowWidth/remainingColumns.length;
+  var remainingRowWidth = _.reduce(this.largestRow, function(sum, otherEvent) {
+    if(!otherEvent.width) {
+      return sum;
     }
+    return sum - otherEvent.width;
+  }, W);
+
+  var remainingColumns = _.filter(this.largestRow, function(otherEvent) {
+    if(otherEvent.width) {
+      return;
+    }
+    return otherEvent;
+  });
+
+  _.each(this.largestRow, function(evt) {
+    if(evt.width) {
+      return;
+    }
+    evt.width = remainingRowWidth/remainingColumns.length;
   });
 }
