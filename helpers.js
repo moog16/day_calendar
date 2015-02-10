@@ -14,12 +14,6 @@ Array.prototype.findPos = function(p) {
   }
 }
 
-Array.prototype.forEach = function(callback) {
-  for(var i=0; i<this.length; i++) {
-    callback(this[i], i, this);
-  }
-}
-
 function range(n) {
   var range = [];
   for(var i=0; i<n; i++) {

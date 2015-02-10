@@ -1,48 +1,6 @@
 var calendar = new Calendar(600);
 function layOutDay(events) {
-  calendar.setCalendarEventsAndSort(events);
-  var W = 600;
-
-  calendar.clearCalendar();
-  calendar.elem.appendChild(createDiv('calendar-day-layout'));
-
-  var calendarEvents = calendar.events;
-  // sort by start and end times
-  calendarEvents.sortByStartAndEndTimes();
-
-  //set overlapping events
-  calendarEvents.forEach(function(calEvent) {
-    calEvent.setOverlappingEvents(calendarEvents);
-  });
-
-  // find largest array of common overlaps and set on
-  calendarEvents.forEach(function(calEvent) {
-    calEvent.setLargestRow();
-  });
-
-  var sortedLargestRowByStartDate = calendarEvents.sort(function(a, b) {
-    return b.largestRow.length - a.largestRow.length;
-  });
-
-  // set width for largest number event rows first
-  sortedLargestRowByStartDate.forEach(function(calEvent) {
-    calEvent.setWidth(W);
-  });
-
-  // set position/lefts
-  sortedLargestRowByStartDate.forEach(function(calEvent) {
-    calEvent.setPosition(W);
-  });
-
-  //apply offset for UI
-  sortedLargestRowByStartDate.forEach(function(calEvent) {
-    calEvent.applyOffset(75);
-  });
-
-  // render on display
-  sortedLargestRowByStartDate.forEach(function(calEvent) {
-    calEvent.plotEvent(calendar);
-  });
+  calendar.layOutDay(events);
 }
 
 
