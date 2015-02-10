@@ -81,20 +81,10 @@ CalEvent.prototype.setLargestRow = function() {
   this.largestRow = commonOverlaps([calEvent], calEvent.overlappingEvents);
 }
 
-CalEvent.prototype._filterEventsWithPosition = function(W) {
-  var availablePositions = _.range(this.largestRow.length);
-  
-  _.each(this.largestRow, function(otherEvent) {
-    if(otherEvent.position !== undefined) { // if there is a position assigned to it already
-      availablePositions = _.without(availablePositions, otherEvent.position);
-    }
-  });
-
-  return availablePositions;
-}
-
 CalEvent.prototype.setPosition = function(W) {
-  var availablePositions = this._filterEventsWithPosition(W);
+  var availablePositions = _.filter(_.range(this.largestRow.length), function(otherEvent) {
+    return otherEvent.position === undefined;
+  });
 
   //must sort before by start and end times
   this.largestRow.sortByStartAndEndTimes();
