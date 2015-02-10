@@ -66,7 +66,6 @@ CalEvent.prototype.setOverlappingEvents = function(calendarEvents) {
 CalEvent.prototype.setLargestRow = function() {
   // finds all largest common overlapping sets of an event
   // sets this array on the event as LargestRow
-  var calEvent = this;
   var commonOverlaps = function(overlaps, remainder) {
     for(var i=0; i<remainder.length; i++) {
       if(remainder[i].isOverlappingAll(overlaps)) {
@@ -78,23 +77,30 @@ CalEvent.prototype.setLargestRow = function() {
 
     return overlaps;
   }
-  this.largestRow = commonOverlaps([calEvent], calEvent.overlappingEvents);
+  this.largestRow = commonOverlaps([this], this.overlappingEvents);
 }
 
-CalEvent.prototype._filterEventsWithPosition = function(W) {
+CalEvent.prototype._filterEventsForPosition = function(W) {
   var availablePositions = _.range(this.largestRow.length);
+  // var availablePositions = _.map(this.largestRow, function(otherEvent, index) {
+  //   // debugger;
+  //   if(otherEvent.position === undefined) {
+  //     return index;
+  //   }
+  // });
   
   _.each(this.largestRow, function(otherEvent) {
     if(otherEvent.position !== undefined) { // if there is a position assigned to it already
       availablePositions = _.without(availablePositions, otherEvent.position);
     }
   });
-
-  return availablePositions;
+// var availablePositions = _.without(availablePositions, undefined, null);
+// debugger;
+  return availablePositions
 }
 
 CalEvent.prototype.setPosition = function(W) {
-  var availablePositions = this._filterEventsWithPosition(W);
+  var availablePositions = this._filterEventsForPosition(W);
 
   //must sort before by start and end times
   this.largestRow.sortByStartAndEndTimes();
@@ -117,22 +123,22 @@ CalEvent.prototype.setPosition = function(W) {
     }
   });
 }
-CalEvent.prototype._filterEventsWithWidth = function(W) {
-  // used only in setWidth()
-  var filteredEvents = {
-    lengthRemaining: W,
-    remaining: []
-  };
+// CalEvent.prototype._filterEventsWithWidth = function(W) {
+//   // used only in setWidth()
+//   var filteredEvents = {
+//     lengthRemaining: W,
+//     remaining: []
+//   };
 
-  _.each(this.largestRow, function(otherEvent) {
-    if(otherEvent.width) {
-      filteredEvents.lengthRemaining -= otherEvent.width;
-    } else {
-      filteredEvents.remaining.push(otherEvent);
-    }
-  });
-  return filteredEvents;
-}
+//   _.each(this.largestRow, function(otherEvent) {
+//     if(otherEvent.width) {
+//       filteredEvents.lengthRemaining -= otherEvent.width;
+//     } else {
+//       filteredEvents.remaining.push(otherEvent);
+//     }
+//   });
+//   return filteredEvents;
+// }
 
 CalEvent.prototype.setWidth = function(W) {
   var remainingRowWidth = _.reduce(this.largestRow, function(sum, otherEvent) {
