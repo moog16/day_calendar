@@ -86,7 +86,7 @@ CalEvent.prototype.plotEvent = function(calendar) {
   elem.style.width = this.width + 'px';
   elem.appendChild(title);
   elem.appendChild(location);
-  calendar.getElementsByClassName('calendar-day-layout')[0].appendChild(elem);
+  calendar.elem.getElementsByClassName('calendar-day-layout')[0].appendChild(elem);
 }
 
 // have the calEvent be aware of the other overlapping events 

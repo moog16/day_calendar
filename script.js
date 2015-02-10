@@ -1,29 +1,12 @@
+var calendar = new Calendar(600);
 function layOutDay(events) {
-  var calendar = document.getElementById('calendar');
+  calendar.setCalendarEventsAndSort(events);
   var W = 600;
 
-  function getCalendarEvents(events) {
-    var calendarEvents = [];
-    events.forEach(function(e) {
-      var calEvent = new CalEvent(e.start, e.end);
-      calendarEvents.push(calEvent);
-    });
-    return calendarEvents;
-  }
+  calendar.clearCalendar();
+  calendar.elem.appendChild(createDiv('calendar-day-layout'));
 
-  function clearCalendar() {
-    var layouts = document.getElementsByClassName('calendar-day-layout');
-    if(layouts.length) {
-      for(var i=0; i<layouts.length; i++) {
-        calendar.removeChild(layouts[i]);
-      }
-    }
-  }
-
-  clearCalendar();
-  calendar.appendChild(createDiv('calendar-day-layout'));
-
-  var calendarEvents = getCalendarEvents(events);
+  var calendarEvents = calendar.events;
   // sort by start and end times
   calendarEvents.sortByStartAndEndTimes();
 
@@ -77,5 +60,5 @@ var events = [
 {start: 90, end: 200}, 
 ];
 
-renderTimes(calendar);
+renderTimes(calendar.elem);
 layOutDay(events);
