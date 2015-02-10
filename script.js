@@ -5,8 +5,7 @@ function layOutDay(events) {
   function getCalendarEvents(events) {
     var calendarEvents = [];
     events.forEach(function(e) {
-      var id = Math.floor(new Date().valueOf()* Math.random());
-      var calEvent = new CalEvent(e.start, e.end, id, e.a);        // todo: remove this
+      var calEvent = new CalEvent(e.start, e.end);
       calendarEvents.push(calEvent);
     });
     return calendarEvents;

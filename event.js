@@ -1,8 +1,7 @@
-function CalEvent(start, end, id, a) { // remove a
-  this.id = id;
+function CalEvent(start, end) {
+  this.id = Math.floor(new Date().valueOf()* Math.random());;
   this.start = start;
   this.end = end;
-  this.a = a; // delete
   this.title = 'Sample Item';
   this.location = 'Sample Location';
   this.top = start;
