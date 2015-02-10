@@ -20,7 +20,7 @@ CalEvent.prototype.applyOffset = function(offset) {
 
 CalEvent.prototype._filterEventsWithPosition = function(W) {
   var filteredEvents = {
-    availablePositions: range(this.largestRow.length),
+    availablePositions: _.range(this.largestRow.length),
     positionsOutstanding: [],
     totalWindowRemaining: W
   };

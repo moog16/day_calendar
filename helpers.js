@@ -14,14 +14,6 @@ Array.prototype.findPos = function(p) {
   }
 }
 
-function range(n) {
-  var range = [];
-  for(var i=0; i<n; i++) {
-    range.push(i);
-  }
-  return range;
-}
-
 Array.prototype.removePosition = function(p) {
   // finds item in array of value p,
   // removes it from the array
