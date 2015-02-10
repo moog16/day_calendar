@@ -18,27 +18,6 @@ CalEvent.prototype.applyOffset = function(offset) {
   this.left += offset;
 }
 
-CalEvent.prototype._filterEventsWithPosition = function(W) {
-  var filteredEvents = {
-    availablePositions: _.range(this.largestRow.length),
-    positionsOutstanding: [],
-    totalWindowRemaining: W
-  };
-  
-  this.largestRow.forEach(function(otherEvent) {
-    if(otherEvent.position !== undefined) { // if there is a position assigned to it already
-      filteredEvents.availablePositions.removePosition(otherEvent.position);
-      filteredEvents.totalWindowRemaining -= otherEvent.width;
-    } else {
-      filteredEvents.positionsOutstanding.push(otherEvent);
-    }
-  });
-
-  return filteredEvents;
-}
-
-
-
 CalEvent.prototype.isOverlapping = function(otherEvent) {
   var start = this.start;
   var otherStart = otherEvent.start;
@@ -102,9 +81,20 @@ CalEvent.prototype.setLargestRow = function() {
   this.largestRow = commonOverlaps([calEvent], calEvent.overlappingEvents);
 }
 
+CalEvent.prototype._filterEventsWithPosition = function(W) {
+  var availablePositions = _.range(this.largestRow.length);
+  
+  _.each(this.largestRow, function(otherEvent) {
+    if(otherEvent.position !== undefined) { // if there is a position assigned to it already
+      availablePositions = _.without(availablePositions, otherEvent.position);
+    }
+  });
+
+  return availablePositions;
+}
+
 CalEvent.prototype.setPosition = function(W) {
-  var filteredEvents = this._filterEventsWithPosition(W);
-  var availablePositions = filteredEvents.availablePositions;
+  var availablePositions = this._filterEventsWithPosition(W);
 
   //must sort before by start and end times
   this.largestRow.sortByStartAndEndTimes();
@@ -112,18 +102,16 @@ CalEvent.prototype.setPosition = function(W) {
   for(var i=0; i<this.largestRow.length; i++) {
     var calEvent = this.largestRow[i];
     if(calEvent.left === undefined) {
-      calEvent.position = Math.min.apply(null, availablePositions);
+      calEvent.position = _.min(availablePositions);
       if(calEvent.position === 0) {
-        availablePositions.removePosition(calEvent.position);
-
         calEvent.left = 0;
       } else {
         var previousPos = calEvent.position -1;
         var previousRowEvent = this.largestRow.findPos(previousPos);
-        availablePositions.removePosition(calEvent.position);
 
         calEvent.left = previousRowEvent.left + previousRowEvent.width;
       }
+      availablePositions = _.without(availablePositions, calEvent.position);
     }
   }
 }
