@@ -31,11 +31,11 @@ Calendar.prototype.layOutDay = function(events) {
 
   // find largest array of common overlaps and set on calEvent
   _.each(this.events, function(calEvent) {
-    calEvent.setLargestRow();
+    calEvent.setMostOverlappingEventsRow();
   });
 
   this.sortedLargestRowByStartDate = this.events.sort(function(a, b) {
-    return b.largestRow.length - a.largestRow.length;
+    return b.mostOverlappingEventsRow.length - a.mostOverlappingEventsRow.length;
   });
 
   this.setWidthsForEvents();

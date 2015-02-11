@@ -8,7 +8,7 @@ function CalEvent(start, end) {
   this.height = end - start;
   this.elem = createDiv('calendar-event');
   this.overlappingEvents = [];
-  this.largestRow = [];
+  this.mostOverlappingEventsRow = [];
   this.position;
   this.width;
   this.left;
@@ -63,9 +63,9 @@ CalEvent.prototype.setOverlappingEvents = function(calendarEvents) {
   }
 }
 
-CalEvent.prototype.setLargestRow = function() {
-  // finds all largest common overlapping sets of an event
-  // sets this array on the event as LargestRow
+CalEvent.prototype.setMostOverlappingEventsRow = function() {
+  // finds all overlapping events 
+  // sets this array as mostOverlappingEventsRow
   var commonOverlaps = function(overlaps, remainder) {
     for(var i=0; i<remainder.length; i++) {
       if(remainder[i].isOverlappingAll(overlaps)) {
@@ -77,85 +77,60 @@ CalEvent.prototype.setLargestRow = function() {
 
     return overlaps;
   }
-  this.largestRow = commonOverlaps([this], this.overlappingEvents);
+  this.mostOverlappingEventsRow = commonOverlaps([this], this.overlappingEvents);
 }
 
-CalEvent.prototype._filterEventsForPosition = function(W) {
-  var availablePositions = _.range(this.largestRow.length);
-  // var availablePositions = _.map(this.largestRow, function(otherEvent, index) {
-  //   // debugger;
-  //   if(otherEvent.position === undefined) {
-  //     return index;
-  //   }
-  // });
+CalEvent.prototype._getAvailablePositions = function(W) {
+  var availablePositions = _.range(this.mostOverlappingEventsRow.length);
   
-  _.each(this.largestRow, function(otherEvent) {
+  _.each(this.mostOverlappingEventsRow, function(otherEvent) {
     if(otherEvent.position !== undefined) { // if there is a position assigned to it already
       availablePositions = _.without(availablePositions, otherEvent.position);
     }
   });
-// var availablePositions = _.without(availablePositions, undefined, null);
-// debugger;
+
   return availablePositions
 }
 
 CalEvent.prototype.setPosition = function(W) {
-  var availablePositions = this._filterEventsForPosition(W);
+  var availablePositions = this._getAvailablePositions(W);
 
-  //must sort before by start and end times
-  this.largestRow.sortByStartAndEndTimes();
-
-  _.each(this.largestRow, function(calEvent, i, largestRow) {
-    if(calEvent.left === undefined) {
-      calEvent.position = _.min(availablePositions);
-      if(calEvent.position === 0) {
-        calEvent.left = 0;
-      } else {
-        var previousPos = calEvent.position -1;
-        // var previousRowEvent = largestRow.findPos(previousPos);
-        var previousRowEvent = _.find(largestRow, function(otherEvent) {
-          return previousPos === otherEvent.position;
-        });
-
-        calEvent.left = previousRowEvent.left + previousRowEvent.width;
-      }
-      availablePositions = _.without(availablePositions, calEvent.position);
+  _.each(this.mostOverlappingEventsRow, function(calEvent, i, largestRow) {
+    if(calEvent.left !== undefined) {
+      return;
     }
+
+    calEvent.position = _.min(availablePositions);
+    if(calEvent.position === 0) {
+      calEvent.left = 0;
+    } else {
+      var previousEventPos = calEvent.position - 1;
+      var previousEventRow = _.find(largestRow, function(otherEvent) {
+        return previousEventPos === otherEvent.position;
+      });
+
+      calEvent.left = previousEventRow.left + previousEventRow.width;
+    }
+    availablePositions = _.without(availablePositions, calEvent.position);
   });
 }
-// CalEvent.prototype._filterEventsWithWidth = function(W) {
-//   // used only in setWidth()
-//   var filteredEvents = {
-//     lengthRemaining: W,
-//     remaining: []
-//   };
-
-//   _.each(this.largestRow, function(otherEvent) {
-//     if(otherEvent.width) {
-//       filteredEvents.lengthRemaining -= otherEvent.width;
-//     } else {
-//       filteredEvents.remaining.push(otherEvent);
-//     }
-//   });
-//   return filteredEvents;
-// }
 
 CalEvent.prototype.setWidth = function(W) {
-  var remainingRowWidth = _.reduce(this.largestRow, function(sum, otherEvent) {
+  var remainingRowWidth = _.reduce(this.mostOverlappingEventsRow, function(sum, otherEvent) {
     if(!otherEvent.width) {
       return sum;
     }
     return sum - otherEvent.width;
   }, W);
 
-  var remainingColumns = _.filter(this.largestRow, function(otherEvent) {
+  var remainingColumns = _.filter(this.mostOverlappingEventsRow, function(otherEvent) {
     if(otherEvent.width) {
       return;
     }
     return otherEvent;
   });
 
-  _.each(this.largestRow, function(evt) {
+  _.each(this.mostOverlappingEventsRow, function(evt) {
     if(evt.width) {
       return;
     }
