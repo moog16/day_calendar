@@ -1,18 +1,18 @@
 function CalEvent(start, end) {
-  this.id = Math.floor(new Date().valueOf()* Math.random());;
+  this.id = Math.floor(new Date().valueOf() * Math.random());
   this.start = start;
   this.end = end;
   this.title = 'Sample Item';
   this.location = 'Sample Location';
   this.top = start;
-  this.height = end - start;
+  this.height = this.end - this.start;
   this.elem = createDiv('calendar-event');
-  this.overlappingEvents = [];
+  this.allOverlappingEvents = [];
   this.mostOverlappingEventsRow = [];
   this.position;
   this.width;
   this.left;
-};
+}
 
 CalEvent.prototype.applyOffset = function(offset) {
   this.left += offset;
@@ -37,14 +37,18 @@ CalEvent.prototype.plotEvent = function(calendar) {
   var elem = this.elem;
   var title = document.createElement('h4');
   var location = document.createElement('h6');
+  function getValueWithPx(value) {
+    return value + 'px';
+  }
+
   title.className = 'title';
   location.className = 'location';
   title.textContent = this.title;
   location.textContent = this.location;
-  elem.style.height = this.height + 'px';
-  elem.style.top = this.top + 'px';
-  elem.style.left = this.left + 'px';
-  elem.style.width = this.width + 'px';
+  elem.style.height = getValueWithPx(this.height);
+  elem.style.top = getValueWithPx(this.top);
+  elem.style.left = getValueWithPx(this.left);
+  elem.style.width = getValueWithPx(this.width);
   elem.appendChild(title);
   elem.appendChild(location);
   calendar.elem.getElementsByClassName('calendar-day-layout')[0].appendChild(elem);
@@ -53,19 +57,15 @@ CalEvent.prototype.plotEvent = function(calendar) {
 // have the calEvent be aware of the other overlapping events 
 // by the otherEvents into an array
 CalEvent.prototype.setOverlappingEvents = function(calendarEvents) {
-  for(var i=0; i<calendarEvents.length; i++) {
-    var otherEvent = calendarEvents[i];
-    if(otherEvent.id === this.id) {
-      continue;
-    } else if(this.isOverlapping(otherEvent)) {
-      this.overlappingEvents.push(otherEvent);
+  this.allOverlappingEvents = _.filter(calendarEvents, function(otherEvent) {
+    if(otherEvent.id !== this.id && this.isOverlapping(otherEvent)) {
+      return otherEvent;
     }
-  }
+  }, this);
 }
 
 CalEvent.prototype.setMostOverlappingEventsRow = function() {
-  // finds all overlapping events 
-  // sets this array as mostOverlappingEventsRow
+  // finds all overlapping events sets this array as mostOverlappingEventsRow
   var commonOverlaps = function(overlaps, remainder) {
     for(var i=0; i<remainder.length; i++) {
       if(remainder[i].isOverlappingAll(overlaps)) {
@@ -77,7 +77,7 @@ CalEvent.prototype.setMostOverlappingEventsRow = function() {
 
     return overlaps;
   }
-  this.mostOverlappingEventsRow = commonOverlaps([this], this.overlappingEvents);
+  this.mostOverlappingEventsRow = commonOverlaps([this], this.allOverlappingEvents);
 }
 
 CalEvent.prototype._getAvailablePositions = function(W) {

@@ -1,17 +1,15 @@
 function Calendar(W) {
   this.elem = document.getElementById('calendar');
   this.W = W;
-  this.events;
-  this.sortedLargestRowByStartDate;
+  this.events = [];
+  this.sortedLargestRowByStartDate = [];
 }
 
 Calendar.prototype.clearCalendar = function() {
   var layouts = document.getElementsByClassName('calendar-day-layout');
-  if(layouts.length) {
-    for(var i=0; i<layouts.length; i++) {
-      calendar.elem.removeChild(layouts[i]);
-    }
-  }
+  _.each(layouts, function(layout) {
+    calendar.elem.removeChild(layout);
+  });
 }
 
 Calendar.prototype.render = function() {
@@ -29,7 +27,7 @@ Calendar.prototype.layOutDay = function(events) {
     calEvent.setOverlappingEvents(allEvents);
   });
 
-  // find largest array of common overlaps and set on calEvent
+  // find array of most overlaps and set on calEvent
   _.each(this.events, function(calEvent) {
     calEvent.setMostOverlappingEventsRow();
   });
